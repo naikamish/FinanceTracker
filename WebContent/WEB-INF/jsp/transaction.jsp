@@ -12,6 +12,14 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 	
 	<script>
+	$(document).ready(function(){
+		$(".tableRow").each(function(){
+			console.log($(".rowType", this).text());
+			var color = ($(".rowType", this).text()=="Credit") ? "#D0F0C0" : "#FF9494";
+			$(this).css({"background-color":color});
+		});
+	});
+	
 	$(function() {
 	    $('.date-picker').datepicker( {
 	        changeMonth: true,
@@ -21,11 +29,17 @@
 	});
 	
 	$(document).on("click", ".editButton", function () {
-	     var myBookId = $(this).data('id');
+	     var id = $(this).data('id');
 	     var maxAmount = $(this).data('max-amount');
-	     $("#editTransaction #editId").val( myBookId );
+	     $("#editTransaction #editId").val( id );
 	     $("#editTransaction #repaid").val( maxAmount );
 	     $("#editTransaction #repaid").attr({"max":maxAmount});
+	});
+	
+	$(document).on("click", ".deleteButton", function () {
+	     var id = $(this).data('id');
+	     var maxAmount = $(this).data('max-amount');
+	     $("#deleteTransaction #deleteId").attr("value", id);
 	});
 	</script>
 </head>
@@ -46,30 +60,58 @@
   <tbody>
 		<c:if test="${not empty lists}">
 			<c:forEach var="a" items="${lists}">
-				<tr>
+				<tr class="tableRow">
 					<td><c:out value="${a.name}" /></td>
 					<td><c:out value="${a.description}" /></td>
-					<td><c:out value="${a.type}" /></td>
+					<td class="rowType"><c:out value="${a.type}" /></td>
 					<td><c:out value="${a.amount}" /></td>
 					<td><c:out value="${a.date}" /></td>
 					<td class="fit">
-						<button type="button" data-target="#editTransaction" data-max-amount="<c:out value='${a.amount}' />" data-id="<c:out value='${a.id}' />" data-toggle="modal" class="btn btn-success btn-sm btn-block editButton">
-							<span class="glyphicon glyphicon-edit"></span> 
-						</button>
+						<c:if test="${a.status=='Open'}">
+							<button type="button" data-target="#editTransaction" data-max-amount="<c:out value='${a.amount}' />" data-id="<c:out value='${a.id}' />" data-toggle="modal" class="btn btn-success btn-sm btn-block editButton">
+								<span class="glyphicon glyphicon-edit"></span> 
+							</button>
+						</c:if>
 					</td>
 					<td class="fit">
-						<a href="#" class="btn btn-danger btn-sm btn-block">
+						<button type="button" data-target="#deleteTransaction" data-id="<c:out value='${a.id}' />" data-toggle="modal" class="btn btn-danger btn-sm btn-block deleteButton">
 							<span class="glyphicon glyphicon-trash"></span> 
-						</a>
+						</button>
 					</td>
 				<tr>
 			</c:forEach>
 		</c:if>
   </tbody>
 </table>
-<button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#addTransaction">
-	<span class="glyphicon glyphicon-plus"></span>
-</button>
+<div class="container container-table">
+    <div class="row vertical-center-row">
+        <div class="text-center col-md-4 col-md-offset-4">
+					<button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#addTransaction">
+						Add Transaction
+					</button>
+				</div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="deleteTransaction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            </div>
+            <div class="modal-body">
+            Are you sure you want to delete?
+            </div>
+            <div class="modal-footer">
+	            <form:form method="POST" action="/WebsiteProject/deleteTransaction">
+	            	<button type="submit" id="deleteId" name="id" class="btn btn-default">Yes</button>
+	            </form:form>
+              <button type="button" class="btn btn-default" data-dismiss="modal">No</button>  
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="editTransaction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -145,8 +187,8 @@
                     <label class="col-sm-2 control-label" for="type" >Type</label>
                     <div class="col-sm-10">
 	                    <form:select path="type" class="form-control">
-							        	<form:option value="CR" label="Credit" />
-							        	<form:option value="DB" label="Debit" />
+							        	<form:option value="Credit" label="Credit" />
+							        	<form:option value="Debit" label="Debit" />
 						        	</form:select>
                     </div>
                   </div>

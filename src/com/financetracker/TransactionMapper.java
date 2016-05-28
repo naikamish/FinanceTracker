@@ -13,6 +13,8 @@ public class TransactionMapper implements RowMapper<Transaction> {
       transaction.setType(rs.getString("type"));
       transaction.setDate(rs.getDate("date"));
       transaction.setId(rs.getInt("id"));
+      transaction.setStatus(rs.getString("status"));
+      transaction.setRepaid(rs.getFloat("repaid"));
       return transaction;
    }
 }

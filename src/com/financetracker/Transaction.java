@@ -16,7 +16,14 @@ public class Transaction {
       this.amount = amount;
    }
    public Float getAmount() {
-      return amount;
+	  Float amt;
+	  if(amount != null && repaid != null && status != null && status.equals("Open")){
+		  amt=amount-repaid;
+		  System.out.println(status);
+	  }
+	  else
+		  amt = amount;
+      return amt;
    }
    
    public void setName(String name) {

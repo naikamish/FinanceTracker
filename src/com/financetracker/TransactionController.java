@@ -4,10 +4,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.ui.ModelMap;
 
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -35,7 +38,7 @@ public class TransactionController {
 	      
 	  transactionJDBCTemplate.create(transaction.getName(),transaction.getDescription(),transaction.getType(),transaction.getAmount(), transaction.getDate(), transaction.getStatus());
       
-      return "transactionResult";
+      return "redirect:/transaction";
    }
    
    @RequestMapping(value = "/updateTransaction", method = RequestMethod.POST)
@@ -47,6 +50,17 @@ public class TransactionController {
 	      
 	  transactionJDBCTemplate.update(transaction.getId(),transaction.getRepaid());
       
-      return "transactionResult";
+      return "redirect:/transaction";
+   }
+   
+   @RequestMapping(value = "/deleteTransaction", method = RequestMethod.POST)
+   public String deleteTransaction(HttpServletRequest request) {
+	  ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+
+	  TransactionJDBCTemplate transactionJDBCTemplate = (TransactionJDBCTemplate)context.getBean("transactionJDBCTemplate");
+	      
+	  transactionJDBCTemplate.delete(Integer.parseInt(request.getParameter("id")));
+      
+      return "redirect:/transaction";
    }
 }
