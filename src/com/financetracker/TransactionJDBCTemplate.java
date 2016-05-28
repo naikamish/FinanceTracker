@@ -14,11 +14,10 @@ public class TransactionJDBCTemplate implements TransactionDAO {
       this.jdbcTemplateObject = new JdbcTemplate(dataSource);
    }
 
-   public void create(String name, String description, String type, Float amount, Date date) {
-      String SQL = "insert into Transactions (name, description, type, amount, date) values (?, ?, ?, ?, ?)";
+   public void create(String name, String description, String type, Float amount, Date date, String status) {
+      String SQL = "insert into Transactions (name, description, type, amount, date, status) values (?, ?, ?, ?, ?, ?)";
       
-      jdbcTemplateObject.update( SQL, name, description, type, amount, date);
-      System.out.println("Created Record Name = " + name + " Age = " + amount);
+      jdbcTemplateObject.update( SQL, name, description, type, amount, date, status);
       return;
    }
 
@@ -41,10 +40,9 @@ public class TransactionJDBCTemplate implements TransactionDAO {
       return;
    }
 
-   public void update(Integer id, Float amount){
-      String SQL = "update transactions set amount =  where id = ?";
-      jdbcTemplateObject.update(SQL, amount, id);
-      System.out.println("Updated Record with ID = " + id );
+   public void update(Integer id, Float repaid){
+      String SQL = "update transactions set repaid = ? where id = ?";
+      jdbcTemplateObject.update(SQL, repaid, id);
       return;
    }
 

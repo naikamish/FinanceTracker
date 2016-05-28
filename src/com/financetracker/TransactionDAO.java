@@ -14,7 +14,7 @@ public interface TransactionDAO {
     * This is the method to be used to create
     * a record in the Student table.
     */
-   public void create(String name, String description, String type, Float amount, Date date);
+   public void create(String name, String description, String type, Float amount, Date date, String status);
    /** 
     * This is the method to be used to list down
     * a record from the Student table corresponding

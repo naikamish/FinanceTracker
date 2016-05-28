@@ -12,6 +12,7 @@ public class TransactionMapper implements RowMapper<Transaction> {
       transaction.setDescription(rs.getString("description"));
       transaction.setType(rs.getString("type"));
       transaction.setDate(rs.getDate("date"));
+      transaction.setId(rs.getInt("id"));
       return transaction;
    }
 }

@@ -8,9 +8,12 @@ public class Transaction {
    private String description;
    private String type;
    private Date date;
+   private String status;
+   private Integer id;
+   private Float repaid;
 
    public void setAmount(Float amount) {
-      this.amount = amount+1;
+      this.amount = amount;
    }
    public Float getAmount() {
       return amount;
@@ -42,5 +45,26 @@ public class Transaction {
    }
    public Date getDate() {
 	  return date;
+   }
+   
+   public void setStatus(String status) {
+      this.status = status;
+   }
+   public String getStatus() {
+	  return status;
+   }
+   
+   public void setId(Integer id) {
+      this.id = id;
+   }
+   public Integer getId() {
+	  return id;
+   }
+   
+   public void setRepaid(Float repaid) {
+      this.repaid = repaid;
+   }
+   public Float getRepaid() {
+	  return repaid;
    }
 }

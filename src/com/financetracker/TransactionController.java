@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.ui.ModelMap;
 
+import java.util.List;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -15,25 +17,35 @@ public class TransactionController {
 
    @RequestMapping(value = "/transaction", method = RequestMethod.GET)
    public ModelAndView transaction() {
-      return new ModelAndView("transaction", "command", new Transaction());
+	  ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+	  TransactionJDBCTemplate transactionJDBCTemplate = (TransactionJDBCTemplate)context.getBean("transactionJDBCTemplate");
+	  List<Transaction> list = transactionJDBCTemplate.listTransactions();
+	  ModelAndView model = new ModelAndView("transaction");
+	  model.addObject("lists",list);
+	  model.addObject("command", new Transaction());
+	  return model;
    }
    
    @RequestMapping(value = "/addTransaction", method = RequestMethod.POST)
    public String addTransaction(@ModelAttribute("WebsiteProject")Transaction transaction, 
    ModelMap model) {
-	   ApplicationContext context = 
-	             new ClassPathXmlApplicationContext("beans.xml");
+	  ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
 
-	      TransactionJDBCTemplate transactionJDBCTemplate = 
-	      (TransactionJDBCTemplate)context.getBean("transactionJDBCTemplate");
+	  TransactionJDBCTemplate transactionJDBCTemplate = (TransactionJDBCTemplate)context.getBean("transactionJDBCTemplate");
 	      
-	      System.out.println("------Records Creation--------" );
-	      transactionJDBCTemplate.create(transaction.getName(),transaction.getDescription(),transaction.getType(),transaction.getAmount(), transaction.getDate());
-      model.addAttribute("name", transaction.getName());
-      model.addAttribute("description", transaction.getDescription());
-      model.addAttribute("amount", transaction.getAmount());
-      model.addAttribute("type", transaction.getType());
-      model.addAttribute("date", transaction.getDate());
+	  transactionJDBCTemplate.create(transaction.getName(),transaction.getDescription(),transaction.getType(),transaction.getAmount(), transaction.getDate(), transaction.getStatus());
+      
+      return "transactionResult";
+   }
+   
+   @RequestMapping(value = "/updateTransaction", method = RequestMethod.POST)
+   public String updateTransaction(@ModelAttribute("WebsiteProject")Transaction transaction, 
+   ModelMap model) {
+	  ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+
+	  TransactionJDBCTemplate transactionJDBCTemplate = (TransactionJDBCTemplate)context.getBean("transactionJDBCTemplate");
+	      
+	  transactionJDBCTemplate.update(transaction.getId(),transaction.getRepaid());
       
       return "transactionResult";
    }
