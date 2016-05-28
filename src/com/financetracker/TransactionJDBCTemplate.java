@@ -41,8 +41,8 @@ public class TransactionJDBCTemplate implements TransactionDAO {
    }
 
    public void update(Integer id, Float repaid){
-      String SQL = "update transactions set repaid = ? where id = ?";
-      jdbcTemplateObject.update(SQL, repaid, id);
+      String SQL = "update transactions set repaid = ?, status = (case when amount = ? then 'Closed' else 'Open' end) where id = ?";
+      jdbcTemplateObject.update(SQL, repaid, repaid, id);
       return;
    }
 

@@ -22,7 +22,10 @@
 	
 	$(document).on("click", ".editButton", function () {
 	     var myBookId = $(this).data('id');
+	     var maxAmount = $(this).data('max-amount');
 	     $("#editTransaction #editId").val( myBookId );
+	     $("#editTransaction #repaid").val( maxAmount );
+	     $("#editTransaction #repaid").attr({"max":maxAmount});
 	});
 	</script>
 </head>
@@ -50,7 +53,7 @@
 					<td><c:out value="${a.amount}" /></td>
 					<td><c:out value="${a.date}" /></td>
 					<td class="fit">
-						<button type="button" data-target="#editTransaction" data-id="<c:out value="${a.id}" />" data-toggle="modal" class="btn btn-success btn-sm btn-block editButton">
+						<button type="button" data-target="#editTransaction" data-max-amount="<c:out value='${a.amount}' />" data-id="<c:out value='${a.id}' />" data-toggle="modal" class="btn btn-success btn-sm btn-block editButton">
 							<span class="glyphicon glyphicon-edit"></span> 
 						</button>
 					</td>
@@ -65,7 +68,7 @@
   </tbody>
 </table>
 <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#addTransaction">
-	<span class="glyphicon glyphicon-plus">
+	<span class="glyphicon glyphicon-plus"></span>
 </button>
 
 <div class="modal fade" id="editTransaction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -95,7 +98,7 @@
                     <label class="col-sm-2 control-label"
                           for="editAmount" >Paid Amount</label>
                     <div class="col-sm-10">
-                    		<form:input path="repaid" class="form-control" id="repaid" placeholder="Repaid"/>
+                    		<form:input path="repaid" class="form-control" type="number" id="repaid" placeholder="Repaid"/>
                     </div>
                   </div>
                   <div class="form-group">
