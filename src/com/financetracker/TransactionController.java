@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.ui.ModelMap;
 
@@ -27,6 +28,14 @@ public class TransactionController {
 	  model.addObject("lists",list);
 	  model.addObject("command", new Transaction());
 	  return model;
+   }
+	
+   @RequestMapping(value = "/transactions", method = RequestMethod.GET)
+   public @ResponseBody List<Transaction> transactionJSON() {
+	  ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+	  TransactionJDBCTemplate transactionJDBCTemplate = (TransactionJDBCTemplate)context.getBean("transactionJDBCTemplate");
+	  List<Transaction> list = transactionJDBCTemplate.listTransactions();
+	  return list;
    }
    
    @RequestMapping(value = "/addTransaction", method = RequestMethod.POST)
