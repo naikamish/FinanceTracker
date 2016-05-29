@@ -19,7 +19,6 @@ public class Transaction {
 	  Float amt;
 	  if(amount != null && repaid != null && status != null && status.equals("Open")){
 		  amt=amount-repaid;
-		  System.out.println(status);
 	  }
 	  else
 		  amt = amount;

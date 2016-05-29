@@ -1,5 +1,6 @@
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page isELIgnored="false" %>
 <html>
 <head>
@@ -14,10 +15,28 @@
 	<script>
 	$(document).ready(function(){
 		$(".tableRow").each(function(){
-			console.log($(".rowType", this).text());
 			var color = ($(".rowType", this).text()=="Credit") ? "#D0F0C0" : "#FF9494";
 			$(this).css({"background-color":color});
 		});
+		
+	    $('#filterForm').on("keyup change", function () {
+	      var textRex = new RegExp($("#filterText",this).val(), 'i');
+	      var statusRex = new RegExp($("#statusFilter", this).find("option:selected").attr("value"), 'i');
+	      var typeRex = new RegExp($("#typeFilter", this).find("option:selected").attr("value"), 'i');
+	      $('.searchable tr').hide();
+	      $('.searchable tr').filter(function () {
+	    	  return textRex.test($(this).text()) 
+	    	  				&& statusRex.test($(this).data('status'))
+	    	  				&& typeRex.test($(".rowType", this).text());
+	      }).show();
+      });
+      
+      $('#clearFilters').on('click', function(e){
+    	  e.preventDefault();
+    	  $("#filterText").val("");
+    	  $("#statusFilter").val("All").change();
+    	  $("#typeFilter").val("All").change();
+      });
 	});
 	
 	$(function() {
@@ -45,6 +64,41 @@
 </head>
 <body>
 <h2>Transaction Information</h2>
+
+<div class="container-fluid">
+<form id="filterForm" class="form-horizontal" role="form">
+	<div class="form-group col-sm-4">
+		<label class="col-sm-2 control-label">Filter</label>
+		<div class="col-sm-10">
+			<input id="filterText" type="text" class="form-control" placeholder="Type here...">
+		</div>
+	</div>
+	<div class="form-group col-sm-4">
+		<label class="col-sm-2 control-label">Status</label>
+		<div class="col-sm-10">
+			<select class="form-control" id="statusFilter">
+				<option value="">All</option>
+				<option value="Open">Open</option>
+				<option value="Closed">Closed</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group col-sm-4">
+		<label class="col-sm-2 control-label">Type</label>
+		<div class="col-sm-10">
+			<select class="form-control" id="typeFilter">
+				<option value="">All</option>
+				<option value="Credit">Credit</option>
+				<option value="Debit">Debit</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group col-sm-1">
+		<button id="clearFilters" class="btn btn-success">Clear</button>
+	</div>
+</form>
+</div>
+
 <table class="table">
   <thead class="thead-inverse">
     <tr>
@@ -57,14 +111,14 @@
       <th class="fit"></th>
     </tr>
   </thead>
-  <tbody>
+  <tbody class="searchable">
 		<c:if test="${not empty lists}">
 			<c:forEach var="a" items="${lists}">
-				<tr class="tableRow">
+				<tr class="tableRow" data-status="<c:out value='${a.status}' />">
 					<td><c:out value="${a.name}" /></td>
 					<td><c:out value="${a.description}" /></td>
 					<td class="rowType"><c:out value="${a.type}" /></td>
-					<td><c:out value="${a.amount}" /></td>
+					<td>$<fmt:formatNumber type="number" minFractionDigits="2" value="${a.amount}" /></td>
 					<td><c:out value="${a.date}" /></td>
 					<td class="fit">
 						<c:if test="${a.status=='Open'}">
@@ -123,19 +177,14 @@
                        <span class="sr-only">Close</span>
                 </button>
                 <h4 class="modal-title" id="myModalLabel">
-                    Modal title
+                    Update Transaction
                 </h4>
             </div>
             
             <!-- Modal Body -->
             <div class="modal-body">
                 <form:form method="POST" action="/WebsiteProject/updateTransaction" class="form-horizontal" role="form">
-                  <div class="form-group">
-                    <label class="col-sm-2 control-label" for="editId">ID</label>
-                    <div class="col-sm-10">
-                    		<form:input path="id" class="form-control" id="editId" placeholder="ID"/>
-                    </div>
-                  </div>
+                  <form:input type="hidden" path="id" class="form-control" id="editId" placeholder="ID"/>
                   <div class="form-group">
                     <label class="col-sm-2 control-label"
                           for="editAmount" >Paid Amount</label>
@@ -164,7 +213,7 @@
 		                <span class="sr-only">Close</span>
                 </button>
                 <h4 class="modal-title" id="myModalLabel">
-                    Modal title
+                    Add Transaction
                 </h4>
             </div>
             
@@ -215,7 +264,7 @@
                   </div>
                   <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                      <button type="submit" class="btn btn-default">Add</button>
+                      <button type="submit" class="btn btn-success">Add</button>
                     </div>
                   </div> 
                 </form:form>   
