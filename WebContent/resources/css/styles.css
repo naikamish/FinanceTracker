@@ -4,6 +4,7 @@
     width: 1%;
 }
 
-input{
-	width: 100%; box-sizing: border-box;
+.table tfoot{
+	font-weight: bold;
 }
+
