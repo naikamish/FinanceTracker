@@ -14,10 +14,10 @@ public class TransactionJDBCTemplate implements TransactionDAO {
       this.jdbcTemplateObject = new JdbcTemplate(dataSource);
    }
 
-   public void create(String name, String description, String type, Float amount, Date date, String status) {
-      String SQL = "insert into Transactions (name, description, type, amount, date, status) values (?, ?, ?, ?, ?, ?)";
+   public void create(String name, String description, String type, Float amount, Date date, String status, String username) {
+      String SQL = "insert into Transactions (name, description, type, amount, date, status, username) values (?, ?, ?, ?, ?, ?, ?)";
       
-      jdbcTemplateObject.update( SQL, name, description, type, amount, date, status);
+      jdbcTemplateObject.update( SQL, name, description, type, amount, date, status, username);
       return;
    }
 
@@ -27,9 +27,9 @@ public class TransactionJDBCTemplate implements TransactionDAO {
       return transaction;
    }
 
-   public List<Transaction> listTransactions() {
-      String SQL = "select * from transactions order by date, name";
-      List <Transaction> transactions = jdbcTemplateObject.query(SQL, new TransactionMapper());
+   public List<Transaction> listTransactions(String username) {
+      String SQL = "select * from transactions where username=? order by date, name";
+      List <Transaction> transactions = jdbcTemplateObject.query(SQL, new String[]{username},  new TransactionMapper());
       return transactions;
    }
 

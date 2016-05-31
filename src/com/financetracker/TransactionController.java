@@ -12,9 +12,14 @@ import org.springframework.ui.ModelMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
 @Controller
 public class TransactionController {
@@ -23,7 +28,7 @@ public class TransactionController {
    public ModelAndView transaction() {
 	  ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
 	  TransactionJDBCTemplate transactionJDBCTemplate = (TransactionJDBCTemplate)context.getBean("transactionJDBCTemplate");
-	  List<Transaction> list = transactionJDBCTemplate.listTransactions();
+	  List<Transaction> list = transactionJDBCTemplate.listTransactions(getPrincipal());
 	  ModelAndView model = new ModelAndView("transaction");
 	  model.addObject("lists",list);
 	  model.addObject("command", new Transaction());
@@ -34,7 +39,7 @@ public class TransactionController {
    public @ResponseBody List<Transaction> transactionJSON() {
 	  ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
 	  TransactionJDBCTemplate transactionJDBCTemplate = (TransactionJDBCTemplate)context.getBean("transactionJDBCTemplate");
-	  List<Transaction> list = transactionJDBCTemplate.listTransactions();
+	  List<Transaction> list = transactionJDBCTemplate.listTransactions(getPrincipal());
 	  return list;
    }
    
@@ -45,7 +50,7 @@ public class TransactionController {
 
 	  TransactionJDBCTemplate transactionJDBCTemplate = (TransactionJDBCTemplate)context.getBean("transactionJDBCTemplate");
 	      
-	  transactionJDBCTemplate.create(transaction.getName(),transaction.getDescription(),transaction.getType(),transaction.getAmount(), transaction.getDate(), transaction.getStatus());
+	  transactionJDBCTemplate.create(transaction.getName(),transaction.getDescription(),transaction.getType(),transaction.getAmount(), transaction.getDate(), transaction.getStatus(), getPrincipal());
       
       return "redirect:/transaction";
    }
@@ -71,5 +76,67 @@ public class TransactionController {
 	  transactionJDBCTemplate.delete(Integer.parseInt(request.getParameter("id")));
       
       return "redirect:/transaction";
+   }
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   @RequestMapping(value = { "/", "/home" }, method = RequestMethod.GET)
+   public String homePage(ModelMap model) {
+       model.addAttribute("greeting", "Hi, Welcome to mysite. ");
+       return "welcome";
+   }
+
+   @RequestMapping(value = "/admin", method = RequestMethod.GET)
+   public String adminPage(ModelMap model) {
+       model.addAttribute("user", getPrincipal());
+       return "admin";
+   }
+
+   @RequestMapping(value = "/db", method = RequestMethod.GET)
+   public String dbaPage(ModelMap model) {
+       model.addAttribute("user", getPrincipal());
+       return "dba";
+   }
+
+   @RequestMapping(value="/logout", method = RequestMethod.GET)
+      public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
+         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+         if (auth != null){    
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+         }
+         return "welcome";
+      }
+
+   @RequestMapping(value = "/Access_Denied", method = RequestMethod.GET)
+   public String accessDeniedPage(ModelMap model) {
+       model.addAttribute("user", getPrincipal());
+       return "accessDenied";
+   }
+    
+   private String getPrincipal(){
+       String userName = null;
+       Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+       if (principal instanceof UserDetails) {
+           userName = ((UserDetails)principal).getUsername();
+       } else {
+           userName = principal.toString();
+       }
+       return userName;
    }
 }
