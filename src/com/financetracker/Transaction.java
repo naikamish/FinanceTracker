@@ -17,7 +17,7 @@ public class Transaction {
    }
    public Float getAmount() {
 	  Float amt;
-	  if(amount != null && repaid != null && status != null && status.equals("Open")){
+	  if(amount != null && repaid != null && status != null){
 		  amt=amount-repaid;
 	  }
 	  else

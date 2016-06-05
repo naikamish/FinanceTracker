@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -78,6 +80,20 @@ public class TransactionController {
       return "redirect:/transaction";
    }
    
+   @RequestMapping(value = "/register", method = RequestMethod.POST)
+   public String register(HttpServletRequest request) {
+	  System.out.println("hello");
+	  ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+
+	  UserJDBCTemplate userJDBCTemplate = (UserJDBCTemplate)context.getBean("userJDBCTemplate");
+	      
+	  userJDBCTemplate.create(request.getParameter("username"), request.getParameter("password"));
+	  
+	  Authentication auth = new UsernamePasswordAuthenticationToken( request.getParameter("username"), request.getParameter("password") );
+	  SecurityContextHolder.getContext().setAuthentication( auth );
+      
+      return "redirect:/transaction";
+   }
    
    
    
@@ -92,6 +108,10 @@ public class TransactionController {
    
    
    
+   @RequestMapping(value = "/login", method = RequestMethod.GET)
+   public String loginPage() {
+       return "login";
+   }
    
    
    

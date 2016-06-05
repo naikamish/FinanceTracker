@@ -1,23 +1,11 @@
-<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page isELIgnored="false" %>
 <html>
 <head>
     <title>Finance Tracker</title>
-	<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
-	<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
-	<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
-	<link rel="stylesheet" href="<c:url value="/resources/css/styles.css" />">
-	<script src="<c:url value="/resources/js/functions.js" />"></script>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-	
-
 </head>
 <body>
-<h2>Transaction Information</h2>
+<%@include file="templates/navbar.jsp" %>
 <%@include file="templates/transactionModals.jsp" %>
+<h2>Transaction Information</h2>
 <div class="container-fluid">
 <form id="filterForm" class="form-horizontal" role="form">
 	<div class="form-group col-sm-4">

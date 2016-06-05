@@ -25,6 +25,10 @@ $(document).ready(function(){
   });
   
   calculateTotals();
+  
+  /*$("#submitLogout").click(function(){
+	     $("#logoutForm").submit();
+  });*/
 });
 
 function calculateTotals(){

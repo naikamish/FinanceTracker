@@ -28,7 +28,7 @@ public class TransactionJDBCTemplate implements TransactionDAO {
    }
 
    public List<Transaction> listTransactions(String username) {
-      String SQL = "select * from transactions where username=? order by date, name";
+      String SQL = "select * from transactions where username=? and amount-repaid>0 order by date, name";
       List <Transaction> transactions = jdbcTemplateObject.query(SQL, new String[]{username},  new TransactionMapper());
       return transactions;
    }
