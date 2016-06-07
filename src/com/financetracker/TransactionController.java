@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -81,18 +83,23 @@ public class TransactionController {
    }
    
    @RequestMapping(value = "/register", method = RequestMethod.POST)
-   public String register(HttpServletRequest request) {
+   public String register(HttpServletRequest request, Model model) {
 	  System.out.println("hello");
 	  ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
 
 	  UserJDBCTemplate userJDBCTemplate = (UserJDBCTemplate)context.getBean("userJDBCTemplate");
 	      
-	  userJDBCTemplate.create(request.getParameter("username"), request.getParameter("password"));
+	  try{
+		  userJDBCTemplate.create(request.getParameter("username"), request.getParameter("password"));
+		  Authentication auth = new UsernamePasswordAuthenticationToken( request.getParameter("username"), request.getParameter("password") );
+		  SecurityContextHolder.getContext().setAuthentication( auth );
+		  return "redirect:/transaction";
+	  }
 	  
-	  Authentication auth = new UsernamePasswordAuthenticationToken( request.getParameter("username"), request.getParameter("password") );
-	  SecurityContextHolder.getContext().setAuthentication( auth );
-      
-      return "redirect:/transaction";
+	  catch(DuplicateKeyException e){
+		  model.addAttribute("error", "Username already exists");
+		  return "register";
+	  }      
    }
    
    
